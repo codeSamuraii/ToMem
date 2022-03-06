@@ -1,7 +1,26 @@
 import os
+import random
 from pathlib import Path
 from pymemcache import serde
 from pymemcache.client import base
+
+
+class RandomWords:
+
+    @staticmethod
+    def random_words():
+        with open('/usr/share/dict/words', mode='r', buffering=1) as words:
+            random_position = random.choice(range(int(2e6)))
+            words.seek(random_position)
+            yield RandomWords.filter_and_clean(words.readline())
+
+    @staticmethod
+    def filter_and_clean(line: str):
+        clean = line.replace('\n', '')
+        if len(clean) < 4:
+            return RandomWords.filter_and_clean(next(RandomWords.random_words()))
+        else:
+            return clean
 
 
 class MemoryStore:
@@ -17,13 +36,23 @@ class MemoryStore:
         self.path = path
         self.id = id
 
+    @property
+    def ledger(self):
+        return self.memcache.get('ledger')
+
+    def set_ledger(self, data: dict):
+        return self.memcache.set('ledger', data)
+
+    def update_ledger(self, data: dict):
+        self.ledger.update(data)
+        return self.set_ledger(data)
+
     def initialize_ledger(self):
-        if not self.memcache.get('ledger'):
-            self.memcache.set('ledger', {})
+        if not self.ledger:
+            self.set_ledger({})
 
     def get_ledger_size(self):
-        ledger = self.memcache.get('ledger')
-        return len(ledger)
+        return len(self.ledger)
 
     def get_next_id(self):
         return str(self.get_ledger_size()).zfill(4)
@@ -34,29 +63,30 @@ class MemoryStore:
 
     def add_record_to_ledger(self):
         record = self.new_record()
-        ledger = self.memcache.get('ledger')
-        ledger.update(record)
-        self.memcache.set('ledger', ledger)
-        return ledger
+        return self.update_ledger(record)
 
     def get_record_from_ledger(self):
-        ledger = self.memcache.get('ledger')
-        return ledger[self.id]
+        return self.ledger[self.id]
 
     def delete_record_from_ledger(self):
-        ledger = self.memcache.get('ledger')
-        ledger.pop(self.id)
-        self.memcache.set('ledger', ledger)
+        self.ledger.pop(self.id)
+        return self.update_ledger(self.ledger)
+
+    def add_entry_to_memory(self, data):
+        return self.memcache.set(self.id, data)
+
+    def get_entry_from_memory(self):
+        return self.memcache.get(self.id)
 
     def file_to_memory(self):
         self.add_record_to_ledger()
         blob = self.path.read_bytes()
-        self.memcache.set(self.id, blob)
+        self.add_entry_to_memory(blob)
         return self.id
 
     def memory_to_file(self):
         name = self.get_record_from_ledger()
-        blob = self.memcache.get(self.id)
+        blob = self.get_entry_from_memory()
         dest = Path.cwd() / name
         dest.touch()
         dest.write_bytes(blob)
