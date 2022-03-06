@@ -4,23 +4,7 @@ from pathlib import Path
 from pymemcache import serde
 from pymemcache.client import base
 
-
-class RandomWords:
-
-    @staticmethod
-    def random_words():
-        with open('/usr/share/dict/words', mode='r', buffering=1) as words:
-            random_position = random.choice(range(int(2e6)))
-            words.seek(random_position)
-            yield RandomWords.filter_and_clean(words.readline())
-
-    @staticmethod
-    def filter_and_clean(line: str):
-        clean = line.replace('\n', '')
-        if len(clean) < 4:
-            return RandomWords.filter_and_clean(next(RandomWords.random_words()))
-        else:
-            return clean
+from.randomwords import get_random_word
 
 
 class MemoryStore:
@@ -54,11 +38,11 @@ class MemoryStore:
     def get_ledger_size(self):
         return len(self.ledger)
 
-    def get_next_id(self):
-        return str(self.get_ledger_size()).zfill(4)
+    def get_random_id(self):
+        return get_random_word()
 
     def new_record(self):
-        self.id = self.id or self.get_next_id()
+        self.id = self.id or self.get_random_id()
         return {self.id: self.path.name}
 
     def add_record_to_ledger(self):
