@@ -9,32 +9,37 @@ from .utils import get_random_word
 class MemLedger:
     """In-memory ledger to keep file informations."""
 
-    MEMCACHE_KEY = ':ledger:'
+    LEDGER_KEY = ':memledger:'
 
-    def __init__(self):
+    def __init__(self, stored_at: str = None):
         self.memcache = base.Client('localhost', serde=serde.pickle_serde)
+        self.ledger_key = stored_at or self.LEDGER_KEY
+        self._check_memcache_conn()
         self._initialize_ledger()
+
+    def _check_memcache_conn(self):
+        try:
+            self.memcache.version()
+        except OSError:
+            raise Exception('Connection to memcache impossible')
 
     def _initialize_ledger(self):
         if self._get_ledger() is None:
             self._set_ledger({})
 
     def _get_ledger(self):
-        return self.memcache.get(self.MEMCACHE_KEY)
+        return self.memcache.get(self.ledger_key)
 
     def _set_ledger(self, data: dict):
-        return self.memcache.set(self.MEMCACHE_KEY, data)
+        return self.memcache.set(self.ledger_key, data)
 
     def _delete_ledger(self):
-        return self.memcache.delete(self.MEMCACHE_KEY)
+        return self.memcache.delete(self.ledger_key)
 
     def _update_ledger(self, data: dict):
         ledger = self._get_ledger()
         ledger.update(data)
         return self._set_ledger(ledger)
-
-    def _get_ledger_size(self):
-        return len(self._get_ledger())
 
     def _get_record(self, id: str):
         return self._get_ledger()[id]
@@ -63,14 +68,13 @@ class MemLedger:
         return id, file_info
 
     def get_file_record(self, id: str):
-        record = self._get_record(id)
-        return list(record.get(key) for key in ['name', 'size', 'checksum'])
+        return self._get_record(id)
 
     def delete_file_record(self, id: str):
         return self._delete_record(id)
 
     def clear_ledger(self):
-        self._set_ledger(None)
+        self._delete_ledger()
 
     def get_all_ids(self):
         return self._get_ledger().keys()

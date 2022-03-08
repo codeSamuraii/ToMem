@@ -13,16 +13,14 @@ from .memledger import MemLedger
 class MemStore:
     """Easy interface to store files in memory with memcached."""
 
-    LEDGER = MemLedger()
-
-    def __init__(self, path: str = None, id: str = None):
+    def __init__(self, path: str = None, id: str = None, ledger: str = None):
         self.memcache = base.Client('localhost', serde=serde.pickle_serde)
-        self.ledger = self.LEDGER
-        self.path = Path(path)
+        self.ledger = MemLedger(stored_at=ledger)
+        self.path = Path(path) if path else None
         self.id = id
 
     def _store_in_memory(self, data):
-        return self.memcache.set(self.id, data)
+        return self.memcache.add(self.id, data)
 
     def _retrieve_from_memory(self, id):
         return self.memcache.get(id)
@@ -30,12 +28,11 @@ class MemStore:
     def _delete_from_memory(self, id):
         return self.memcache.delete(id)
 
-    @classmethod
-    def clear(cls):
-        file_ids = cls.LEDGER.get_all_ids()
+    def clear(self):
+        file_ids = self.ledger.get_all_ids()
         for id in file_ids:
             self._delete_from_memory(id)
-        ledger.clear_ledger()
+        self.ledger.clear_ledger()
         return file_ids
 
     @classmethod
@@ -63,7 +60,7 @@ class MemStore:
     def _memory_to_file(self):
         blob = self._retrieve_from_memory(self.id)
         record = self.ledger.get_file_record(self.id)
-        name, size, checksum = record
+        name, size, checksum = record.values()
         self._create_file(name, blob)
 
         if not self._verify_checksum(checksum, blob):
@@ -78,10 +75,10 @@ class MemStore:
         return id, record
 
     @classmethod
-    def from_id(cls, id: str, dest: str = None, delete_record: bool = True) :
+    def from_id(cls, id: str, dest: str = None) :
         store = cls(path=dest, id=str(id))
         record = store._memory_to_file()
-        if delete_record: store.ledger.delete_file_record(id)
+        store.ledger.delete_file_record(id)
         return record
 
 
@@ -89,7 +86,7 @@ class MemStore:
 def store_in_memory(file_path: str, id: str = None, delete=False):
     id, file_info = MemStore.read_file(file_path, id)
     display = ' - '.join(f'{key}: {value}' for key, value in file_info.items())
-    print(f"> id: {id} | {display}")
+    print(f"[+] id: {id} | {display}")
 
     if delete:
         os.remove(file_path)
@@ -99,4 +96,6 @@ def store_in_memory(file_path: str, id: str = None, delete=False):
 
 def retrieve_file(id: str, dest: str = None):
     file_info = MemStore.from_id(id, dest)
-    return list(file_info)
+    display = ' - '.join(f'{key}: {value}' for key, value in file_info.items())
+    print(f"[-] id: {id} | {display}")
+    return file_info
