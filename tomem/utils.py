@@ -17,5 +17,9 @@ def get_random_line(fd, a, b):
     return fd.readline()
 
 
-def get_random_words(n: int):
-    return [get_random_word() for i in range(n)]
+def size_format(num, suffix="B"):
+    for unit in ["", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"]:
+        if abs(num) < 1024.0:
+            return f"{num:3.1f}{unit}{suffix}"
+        num /= 1024.0
+    return f"{num:.1f}Yi{suffix}"
