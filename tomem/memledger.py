@@ -9,11 +9,11 @@ from .utils import get_random_word
 class MemLedger:
     """In-memory ledger to keep file informations."""
 
-    LEDGER_KEY = ':memledger:'
+    DEFAULT_MEMCACHE_KEY = ':memledger:'
 
     def __init__(self, stored_at: str = None):
         self.memcache = base.Client('localhost', serde=serde.pickle_serde)
-        self.ledger_key = stored_at or self.LEDGER_KEY
+        self.ledger_key = stored_at or self.DEFAULT_MEMCACHE_KEY
         self._check_memcache_conn()
         self._initialize_ledger()
 
@@ -21,7 +21,7 @@ class MemLedger:
         try:
             self.memcache.version()
         except OSError:
-            raise Exception('Connection to memcache impossible')
+            raise Exception('Connection to memcache impossible.')
 
     def _initialize_ledger(self):
         if self._get_ledger() is None:
