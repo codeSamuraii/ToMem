@@ -14,6 +14,7 @@ def get_command_arguments():
     group.add_argument('--retrieve', metavar=('id', 'dest'), nargs='+', help='ID of the file to retrieve')
     group.add_argument('--store', metavar=('file', 'id'), nargs='+', help='file to store with optional custom ID')
     group.add_argument('--flush-all', action='store_true', help='wipes all files stored in memory')
+    group.add_argument('--list', action='store_true', help='lists all files stored')
     return parser.parse_args()
 
 
@@ -25,11 +26,14 @@ if __name__ == '__main__':
         path_only = {path for path in files if '::' not in path}
         with_id = dict(id_and_path.split('::') for id_and_path in files.difference(path_only))
         store = MemStore(*path_only, **with_id)
-        print('\n'.join(f'* {id} - {filename}' for id, filename in store.list_files().items()))
+        print('\n'.join(f'+ {id} - {filename}' for id, filename in store.history.items()))
     elif args.retrieve:
         store = MemStore()
         for file in set(args.retrieve):
             store.retrieve_file(file)
+    elif args.list:
+        store = MemStore()
+        print('\n'.join(f'* {id} - {filename}' for id, filename in store.list_files().items()))
     else:
         store = MemStore()
         n, s = store.flush_all()

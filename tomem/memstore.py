@@ -8,11 +8,14 @@ class MemStore(MemLedger):
 
     def __init__(self, *args, stored_at: str = None, **kwargs):
         super().__init__(stored_at)
+        self.history = {}
 
         for path in args:
-            self.store_file(path)
+            id, record = self.store_file(path)
+            self.history[id] = record[id]['name']
         for id, path in kwargs.items():
-            self.store_file(path, id)
+            id, record = self.store_file(path, id)
+            self.history[id] = record[id]['name']
 
     def _store_file_data(self, id: str, data: bytes):
         return self.memcache.set(id, data)
