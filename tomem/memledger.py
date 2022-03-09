@@ -1,5 +1,4 @@
 import hashlib
-from pathlib import Path
 from pymemcache import serde
 from pymemcache.client import base
 
@@ -44,40 +43,29 @@ class MemLedger:
     def _get_record(self, id: str):
         return self._get_ledger()[id]
 
-    def _delete_record(self, id: str):
-        ledger = self._get_ledger()
-        ledger.pop(id)
-        return self._set_ledger(ledger)
+    def _get_file_record(self, id: str):
+        return self._get_record(id).values()
 
-    def _new_record(self, data, id: str = None):
+    def _build_record(self, data, id: str = None):
         id = id or get_random_word()
-        return {id: data}, id
+        return id, {id: data}
+
+    def _build_file_record(self, filename: str, blob: bytes, id: str = None):
+        file_info = {'name': filename, 'size': len(blob), 'checksum': self._md5(blob)}
+        return self._build_record(file_info, id)
 
     def _add_record(self, data, id: str = None):
-        record, id = self._new_record(data, id)
+        id, record = self._build_record(data, id)
         self._update_ledger(record)
-        return record, id
+        return id, record
 
-    def new_file_record(self, path: Path, blob: bytes, custom_id: str = None):
-        file_info = {
-            'name': path.name,
-            'size': len(blob),
-            'checksum': hashlib.md5(blob).hexdigest()
-        }
-        record, id = self._add_record(file_info, custom_id)
-        return id, file_info
+    def _add_file_record(self, filename: str, blob: bytes, id: str = None):
+        id, record = self._build_file_record(filename, blob, id)
+        self._update_ledger(record)
+        return id, record
 
-    def get_file_record(self, id: str):
-        return self._get_record(id)
-
-    def delete_file_record(self, id: str):
-        return self._delete_record(id)
-
-    def clear_ledger(self):
-        self._delete_ledger()
-
-    def get_all_ids(self):
-        return self._get_ledger().keys()
+    def _md5(self, blob):
+        return hashlib.md5(blob).hexdigest()
 
     def get_memory_usage(self):
         ledger = self._get_ledger()
