@@ -7,12 +7,12 @@ from .memledger import MemLedger
 class MemStore(MemLedger):
 
     def __init__(self, *args, stored_at: str = None, **kwargs):
-        MemLedger.__init__(self, stored_at)
+        super().__init__(stored_at)
 
         for path in args:
-            self.add_file(path)
+            self.store_file(path)
         for id, path in kwargs.items():
-            self.add_file(path, id)
+            self.store_file(path, id)
 
     def _store_file_data(self, id: str, data: bytes):
         return self.memcache.set(id, data)
@@ -24,6 +24,9 @@ class MemStore(MemLedger):
         else:
             raise Exception()
 
+    def _delete_file_data(self, id: str):
+        return self.memcache.delete(id)
+
     def _get_readable_path(self, path: str = ''):
         path = Path(path)
         if path.is_file() and os.access(path, os.R_OK):
@@ -34,9 +37,9 @@ class MemStore(MemLedger):
     def _get_writable_path(self, path: Path, name: str):
         if path is None and name != '':
             return Path.cwd() / name
-        if path.is_dir():
+        elif path.is_dir():
             return path / name
-        if path.parent.is_dir() and not path.is_file():
+        elif path.parent.is_dir() and not path.is_file():
             path.touch()
             return path
         else:
@@ -63,4 +66,12 @@ class MemStore(MemLedger):
         assert written == size
 
     def list_files(self):
-        return {key: value['name'] for key, value in self._get_ledger()}
+        return {id: record['name'] for id, record in self._get_ledger().items()}
+
+    def flush_all(self):
+        cleared = self.get_memory_usage()
+        ids = self._get_ledger().keys()
+        for id in ids:
+            self._delete_file_data(id)
+        self._delete_ledger()
+        return len(ids), cleared
