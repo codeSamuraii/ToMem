@@ -19,20 +19,19 @@ class MemStore(MemLedger):
 
     def _retrieve_file_data(self, id: str, checksum: str):
         blob = self.memcache.get(id)
-        if self._md5(blob) == checksum:
-            return blob
-        else:
-            raise Exception()
+        if self._md5(blob) != checksum:
+            raise Exception("Checksums don't match. File may be corrupted.")
+        return blob
 
     def _delete_file_data(self, id: str):
         return self.memcache.delete(id)
 
     def _get_readable_path(self, path: str = ''):
         path = Path(path)
-        if path.is_file() and os.access(path, os.R_OK):
-            return path
-        else:
+        if not path.is_file() or not os.access(path, os.R_OK):
             raise Exception(f'Unable to read file: {path}')
+        return path
+
 
     def _get_writable_path(self, path: Path, name: str):
         if path is None and name != '':
@@ -42,8 +41,7 @@ class MemStore(MemLedger):
         elif path.parent.is_dir() and not path.is_file():
             path.touch()
             return path
-        else:
-            raise Exception()
+        raise Exception('Invalid path or filename already in use.')
 
     def _read_file(self, path: str):
         source = self._get_readable_path(path)
