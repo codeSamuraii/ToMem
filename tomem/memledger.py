@@ -40,29 +40,29 @@ class MemLedger:
         ledger.update(data)
         return self._set_ledger(ledger)
 
-    def _get_record(self, id: str):
-        return self._get_ledger()[id]
+    def _get_record(self, uid: str):
+        return self._get_ledger()[uid]
 
-    def _get_file_record(self, id: str):
-        return self._get_record(id).values()
+    def _get_file_record(self, uid: str):
+        return self._get_record(uid).values()
 
-    def _build_record(self, data, id: str = None):
-        id = id or get_random_word()
-        return id, {id: data}
+    def _build_record(self, data, uid: str = None):
+        uid = uid or get_random_word()
+        return uid, {uid: data}
 
-    def _build_file_record(self, filename: str, blob: bytes, id: str = None):
+    def _build_file_record(self, filename: str, blob: bytes, uid: str = None):
         file_info = {'name': filename, 'size': len(blob), 'checksum': self._md5(blob)}
-        return self._build_record(file_info, id)
+        return self._build_record(file_info, uid)
 
-    def _add_record(self, data, id: str = None):
-        id, record = self._build_record(data, id)
+    def _add_record(self, data, uid: str = None):
+        uid, record = self._build_record(data, uid)
         self._update_ledger(record)
-        return id, record
+        return uid, record
 
-    def _add_file_record(self, filename: str, blob: bytes, id: str = None):
-        id, record = self._build_file_record(filename, blob, id)
+    def _add_file_record(self, filename: str, blob: bytes, uid: str = None):
+        uid, record = self._build_file_record(filename, blob, uid)
         self._update_ledger(record)
-        return id, record
+        return uid, record
 
     def _md5(self, blob):
         return hashlib.md5(blob).hexdigest()
