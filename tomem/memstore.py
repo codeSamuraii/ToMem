@@ -35,7 +35,6 @@ class MemStore(MemLedger):
             raise Exception(f'Unable to read file: {path}')
         return path
 
-
     def _get_writable_path(self, path: Path, name: str):
         if path is None and name != '':
             return Path.cwd() / name
