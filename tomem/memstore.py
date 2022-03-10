@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from typing import Tuple
 
-from .memledger import MemLedger
+from memledger import MemLedger
 
 
 class MemStore(MemLedger):
