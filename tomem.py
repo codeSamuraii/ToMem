@@ -33,7 +33,7 @@ if __name__ == '__main__':
             store.retrieve_file(file)
     elif args.list:
         store = MemStore()
-        print('\n'.join(f'* {id} - {filename}' for id, filename in store.list_files().items()))
+        print('\n'.join(f'* {id} - {filename}' for id, filename in store.stored_files().items()))
     else:
         store = MemStore()
         n, s = store.flush_all()
