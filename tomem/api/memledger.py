@@ -2,7 +2,7 @@ import hashlib
 from pymemcache import serde
 from pymemcache.client import base
 
-from utils import get_random_word
+from .utils import get_random_word
 
 
 class MemLedger:

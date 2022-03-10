@@ -1,8 +1,8 @@
 import sys
 import argparse
 
-from utils import size_format
-from memstore import MemStore
+from api.utils import size_format, display_dict
+from api import MemStore
 
 
 def get_command_arguments():
@@ -22,19 +22,18 @@ def get_command_arguments():
 def store(files):
     path_only = {path for path in files if '::' not in path}
     with_id = dict(id_and_path.split('::') for id_and_path in files.difference(path_only))
-    store = MemStore(*path_only, **with_id)
-    print('\n'.join(f'+ {id} - {filename}' for id, filename in store.history.items()))
+    store = MemStore.from_files(*path_only, **with_id)
 
 
-def retrieve(args):
+def retrieve(uids):
     store = MemStore()
-    for file in set(args.retrieve):
-        store.retrieve_file(file)
+    for uid in uids:
+        store.retrieve_file(uid)
 
 
 def list_entries():
     store = MemStore()
-    print('\n'.join(f'* {id} - {filename}' for id, filename in store.stored_files().items()))
+    display_dict(store.stored_files())
 
 
 def flush():
@@ -45,6 +44,7 @@ def flush():
 
 def main():
     args = get_command_arguments()
+
     if args.store:
         store(set(args.store))
     elif args.retrieve:

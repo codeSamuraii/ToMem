@@ -2,13 +2,14 @@ import os
 from pathlib import Path
 from typing import Tuple
 
-from memledger import MemLedger
+from .memledger import MemLedger
+from .utils import display_dict
 
 
 class MemStore(MemLedger):
     """Python API to store files in memory using `memcached`.
 
-    Uses a file ledger to keep track of stored file informations such as _name_, _size_ and _MD5 checksum_
+    Uses a ledger to keep track of stored files informations such as name, size and checksum
     to ensure data integrity. A custom uid can be provided when storing a file, otherwise a human-readable
     one will be provided.
 
@@ -19,13 +20,20 @@ class MemStore(MemLedger):
 
     """
 
-    def __init__(self, ledger_key: str = None, *args: str, **kwargs: str):
+    def __init__(self, ledger_key: str = None):
         super().__init__(ledger_key)
 
+    @classmethod
+    def from_files(cls, *args, ledger_key: str = None, **kwargs):
+        memstore = cls(ledger_key)
+
         for path in args:
-            uid, record = self.store_file(path)
+            uid, record = memstore.store_file(path)
         for uid, path in kwargs.items():
-            uid, record = self.store_file(path, uid)
+            uid, record = memstore.store_file(path, uid)
+
+        display_dict(memstore.stored_files())
+        return memstore
 
     def _store_file_data(self, uid: str, data: bytes) -> bool:
         return self.memcache.set(uid, data)

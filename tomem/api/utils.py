@@ -23,3 +23,8 @@ def size_format(num, suffix="B"):
             return f"{num:3.1f}{unit}{suffix}"
         num /= 1024.0
     return f"{num:.1f}Yi{suffix}"
+
+
+def display_dict(d):
+    for key, value in d.items():
+        print(f'* {key} - {value}')
