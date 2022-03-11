@@ -8,8 +8,6 @@ pymemcache = "*"
 
 [dev-packages]
 ipython = "*"
-pydoctor = "*"
-pdoc = "*"
 
 [requires]
-python_version = "3.9"
+python_version = "3.10"
