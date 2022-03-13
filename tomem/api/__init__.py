@@ -1,2 +1,5 @@
-from .memstore import MemStore
+"""
+Python API classes
+"""
 from .memledger import MemLedger
+from .memstore import MemStore

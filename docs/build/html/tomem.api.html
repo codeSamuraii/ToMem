@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MemStore &mdash; ToMem 0.1a documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Python API" href="api.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> ToMem
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Python API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ToMem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="api.html">Python API</a> &raquo;</li>
+      <li>MemStore</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tomem.api.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="memstore">
+<h1>MemStore<a class="headerlink" href="#memstore" title="Permalink to this headline"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="tomem.api.memstore.MemStore">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tomem.api.memstore.</span></span><span class="sig-name descname"><span class="pre">MemStore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ledger_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tomem/api/memstore.html#MemStore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tomem.api.memstore.MemStore" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#tomem.api.memledger.MemLedger" title="tomem.api.memledger.MemLedger"><code class="xref py py-class docutils literal notranslate"><span class="pre">tomem.api.memledger.MemLedger</span></code></a></p>
+<p>Python API to store files in memory using <cite>memcached</cite>.</p>
+<p>Uses a ledger to keep track of stored files informations such as name, size and checksum
+to ensure data integrity. A custom uid can be provided when storing a file, otherwise a human-readable
+one will be provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ledger_key</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Connect to an existing ledger or create one with specified key.</p></li>
+<li><p><strong>*args</strong> – Paths of files to store. A random uid will be used for each.</p></li>
+<li><p><strong>**kwargs</strong> – Paths of files to be stored with a specific uid.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="tomem.api.memstore.MemStore.flush_all">
+<span class="sig-name descname"><span class="pre">flush_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/tomem/api/memstore.html#MemStore.flush_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tomem.api.memstore.MemStore.flush_all" title="Permalink to this definition"></a></dt>
+<dd><p>Delete every file stored in memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Number of files removed and total bytes freed from memory.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> of <code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tomem.api.memstore.MemStore.retrieve_file">
+<span class="sig-name descname"><span class="pre">retrieve_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tomem/api/memstore.html#MemStore.retrieve_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tomem.api.memstore.MemStore.retrieve_file" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieve a file from memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<em>str</em>) – uid of the file.</p></li>
+<li><p><strong>path</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Custom path for file creation.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><cite>path</cite> must point to a directory or a non-existent file.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tomem.api.memstore.MemStore.store_file">
+<span class="sig-name descname"><span class="pre">store_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/tomem/api/memstore.html#MemStore.store_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tomem.api.memstore.MemStore.store_file" title="Permalink to this definition"></a></dt>
+<dd><p>Store a file in memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – Path to the file.</p></li>
+<li><p><strong>uid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Specify a custom uid for the file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>rtype: (str, dict): uid of the file and record added to the ledger.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tomem.api.memstore.MemStore.stored_files">
+<span class="sig-name descname"><span class="pre">stored_files</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/tomem/api/memstore.html#MemStore.stored_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tomem.api.memstore.MemStore.stored_files" title="Permalink to this definition"></a></dt>
+<dd><p>Fetch a mapping of stored files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>uid and filename for every stored file.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="memledger">
+<h1>MemLedger<a class="headerlink" href="#memledger" title="Permalink to this headline"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="tomem.api.memledger.MemLedger">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tomem.api.memledger.</span></span><span class="sig-name descname"><span class="pre">MemLedger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stored_at</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tomem/api/memledger.html#MemLedger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tomem.api.memledger.MemLedger" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>In-memory ledger to keep file informations.</p>
+</dd></dl>
+
+</section>
+<section id="module-tomem.api.utils">
+<span id="utils"></span><h1>Utils<a class="headerlink" href="#module-tomem.api.utils" title="Permalink to this headline"></a></h1>
+<p>Functions to fetch random words from system dict.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tomem.api.utils.display_dict">
+<span class="sig-prename descclassname"><span class="pre">tomem.api.utils.</span></span><span class="sig-name descname"><span class="pre">display_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tomem/api/utils.html#display_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tomem.api.utils.display_dict" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tomem.api.utils.get_random_line">
+<span class="sig-prename descclassname"><span class="pre">tomem.api.utils.</span></span><span class="sig-name descname"><span class="pre">get_random_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tomem/api/utils.html#get_random_line"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tomem.api.utils.get_random_line" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tomem.api.utils.get_random_word">
+<span class="sig-prename descclassname"><span class="pre">tomem.api.utils.</span></span><span class="sig-name descname"><span class="pre">get_random_word</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tomem/api/utils.html#get_random_word"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tomem.api.utils.get_random_word" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tomem.api.utils.size_format">
+<span class="sig-prename descclassname"><span class="pre">tomem.api.utils.</span></span><span class="sig-name descname"><span class="pre">size_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'B'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tomem/api/utils.html#size_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tomem.api.utils.size_format" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api.html" class="btn btn-neutral float-left" title="Python API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Rémi Héneault - @codeSamuraii.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
