@@ -15,7 +15,7 @@ $ python tomem.py --store file_1 file_2 custom_id::file_3
 
 Retrieve files :
 ```
-$ python tomem.py --retrieve shovelmaker custom_id
+$ python tomem.py --retrieve shovelmaker
 ```
 
 List stored files :
